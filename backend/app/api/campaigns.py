@@ -71,3 +71,108 @@ async def evaluate_campaign_eligibility(
     tenant: TenantContext = Depends(get_tenant_context)
 ):
     return await eligibility_engine.evaluate_campaign(db, campaign_id, tenant)
+
+
+from app.schemas.campaign_prioritization import PrioritizationResult
+from app.services.priority_engine import priority_engine
+
+@router.post(
+    "/{campaign_id}/prioritize",
+    response_model=PrioritizationResult,
+    status_code=status.HTTP_200_OK,
+)
+async def prioritize_campaign(
+    campaign_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+    tenant: TenantContext = Depends(get_tenant_context)
+):
+    return await priority_engine.prioritize_campaign(db, campaign_id, tenant)
+
+
+from app.schemas.queue_creation import QueueCreationResult
+from app.services.queue_creation_service import queue_creation_service
+
+@router.post(
+    "/{campaign_id}/queue",
+    response_model=QueueCreationResult,
+    status_code=status.HTTP_200_OK,
+)
+async def create_outbound_queue(
+    campaign_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+    tenant: TenantContext = Depends(get_tenant_context)
+):
+    return await queue_creation_service.create_queue_entries(db, campaign_id, tenant)
+
+
+@router.post(
+    "/{campaign_id}/ready",
+    response_model=CampaignRead,
+    status_code=status.HTTP_200_OK,
+    summary="Mark a Campaign as READY"
+)
+async def mark_campaign_ready(
+    campaign_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+    tenant: TenantContext = Depends(get_tenant_context)
+):
+    """
+    Mark a Campaign as READY.
+    It must be fully prepared (validation, queue creation complete).
+    """
+    return await campaign_service.mark_ready(db, campaign_id, tenant)
+
+
+@router.post(
+    "/{campaign_id}/start",
+    response_model=CampaignRead,
+    status_code=status.HTTP_200_OK,
+    summary="Transition a Campaign to RUNNING status"
+)
+async def start_campaign(
+    campaign_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+    tenant: TenantContext = Depends(get_tenant_context)
+):
+    """
+    Start a Campaign. 
+    It must be READY, PAUSED, or SCHEDULED.
+    """
+    return await campaign_service.start_campaign(db, campaign_id, tenant)
+
+
+@router.post(
+    "/{campaign_id}/pause",
+    response_model=CampaignRead,
+    status_code=status.HTTP_200_OK,
+    summary="Pause a RUNNING Campaign"
+)
+async def pause_campaign(
+    campaign_id: uuid.UUID,
+    db: AsyncSession = Depends(get_db),
+    tenant: TenantContext = Depends(get_tenant_context)
+):
+    """
+    Pause an active RUNNING campaign.
+    """
+    return await campaign_service.pause_campaign(db, campaign_id, tenant)
+
+
+from app.schemas.campaign import CampaignSchedule
+
+@router.post(
+    "/{campaign_id}/schedule",
+    response_model=CampaignRead,
+    status_code=status.HTTP_200_OK,
+    summary="Schedule a READY Campaign"
+)
+async def schedule_campaign(
+    campaign_id: uuid.UUID,
+    payload: CampaignSchedule,
+    db: AsyncSession = Depends(get_db),
+    tenant: TenantContext = Depends(get_tenant_context)
+):
+    """
+    Schedule a READY campaign to start automatically at a future time.
+    """
+    return await campaign_service.schedule_campaign(db, campaign_id, payload.start_at, tenant)

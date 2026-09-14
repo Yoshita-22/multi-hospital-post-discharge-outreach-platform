@@ -1,5 +1,5 @@
 import json
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, List, Tuple
 import uuid
 
@@ -67,7 +67,7 @@ class EligibilityEngine:
         
         patients_list = []
         patient_upserts = []
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         
         for row in rows:
             # Reconstruct the explanation strings per patient based on the rules we have
@@ -146,7 +146,7 @@ class EligibilityEngine:
             campaign_id=campaign.id,
             evaluated_count=evaluated_count,
             eligible_count=0,
-            evaluation_timestamp=datetime.utcnow().isoformat(),
+            evaluation_timestamp=datetime.now(timezone.utc).isoformat(),
             patients=[]
         )
 
@@ -187,7 +187,7 @@ class EligibilityEngine:
         
         if field == "age":
             # Extract year from DOB
-            col = datetime.utcnow().year - func.extract('year', Patient.date_of_birth)
+            col = datetime.now(timezone.utc).year - func.extract('year', Patient.date_of_birth)
         elif field == "gender":
             col = Patient.gender
         elif field == "preferred_contact_method":
@@ -201,10 +201,10 @@ class EligibilityEngine:
         elif field == "discharged_within_days":
             # difference in days between now and discharge
             # Discharge.discharge_timestamp >= now - days
-            cutoff = datetime.utcnow() - timedelta(days=value)
+            cutoff = datetime.now(timezone.utc) - timedelta(days=value)
             return (Discharge.discharge_timestamp >= cutoff, f"Discharged within {value} days")
         elif field == "days_until_follow_up_deadline":
-            cutoff = datetime.utcnow() + timedelta(days=value)
+            cutoff = datetime.now(timezone.utc) + timedelta(days=value)
             return (Discharge.follow_up_deadline <= cutoff, f"Follow-up deadline within {value} days")
         elif field == "encounter_type":
             col = select(Encounter.encounter_type).where(Encounter.patient_id == Patient.id).scalar_subquery()

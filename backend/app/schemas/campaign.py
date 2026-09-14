@@ -43,15 +43,19 @@ class CampaignUpdate(BaseModel):
 
 
 class CampaignRead(CampaignBase):
-    """Schema for reading a Campaign."""
     id: uuid.UUID
-    status: CampaignStatus
-    
+    hospital_id: uuid.UUID
+    status: str
+    validation_status: str
+    created_by: Optional[uuid.UUID] = None
     start_at: Optional[datetime] = None
     end_at: Optional[datetime] = None
-    
-    created_by: Optional[uuid.UUID] = None
     created_at: datetime
     updated_at: datetime
 
-    model_config = {"from_attributes": True}
+    class Config:
+        from_attributes = True
+
+
+class CampaignSchedule(BaseModel):
+    start_at: datetime

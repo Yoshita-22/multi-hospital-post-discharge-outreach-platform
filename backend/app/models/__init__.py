@@ -13,6 +13,7 @@ from app.models.ehr import (  # noqa: F401
 )
 from app.models.campaign import Campaign, CampaignStatus, CampaignValidationStatus  # noqa: F401
 from app.models.campaign_patient import CampaignPatient  # noqa: F401
+from app.models.outbound_queue import OutboundQueue, QueueItemStatus  # noqa: F401
 
 __all__ = [
     "Hospital",
@@ -39,4 +40,6 @@ __all__ = [
     "CampaignStatus",
     "CampaignValidationStatus",
     "CampaignPatient",
+    "OutboundQueue",
+    "QueueItemStatus",
 ]

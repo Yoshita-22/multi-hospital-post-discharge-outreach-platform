@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api import auth, audit, hospitals, knowledge, protocols, users, ehr, campaigns
+from app.api import auth, audit, hospitals, knowledge, protocols, users, ehr, campaigns, scheduler
 
 
 @asynccontextmanager
@@ -51,6 +51,7 @@ def create_app() -> FastAPI:
     app.include_router(audit.router, prefix=PREFIX)
     app.include_router(ehr.router, prefix=PREFIX)
     app.include_router(campaigns.router, prefix=PREFIX)
+    app.include_router(scheduler.router, prefix=PREFIX)
 
     # ------------------------------------------------------------------ #
     # Health check                                                         #

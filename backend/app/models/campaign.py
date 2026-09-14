@@ -13,10 +13,13 @@ from app.db.database import Base
 
 class CampaignStatus(str, enum.Enum):
     DRAFT = "DRAFT"
-    RUNNING = "RUNNING"
+    READY = "READY"
     SCHEDULED = "SCHEDULED"
-    COMPLETED = "COMPLETED"
+    RUNNING = "RUNNING"
     PAUSED = "PAUSED"
+    COMPLETED = "COMPLETED"
+    CANCELLED = "CANCELLED"
+    FAILED = "FAILED"
 
 
 class CampaignValidationStatus(str, enum.Enum):
