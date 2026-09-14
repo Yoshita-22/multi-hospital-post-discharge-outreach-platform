@@ -3,15 +3,19 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api import auth, audit, hospitals, knowledge, protocols, users, ehr, campaigns, scheduler
+from app.api import auth, audit, hospitals, knowledge, protocols, users, ehr, campaigns, scheduler, voice_demo, voice, triage
+from fastapi.staticfiles import StaticFiles
 
+from app.core.periodic_scheduler import start_scheduler, stop_scheduler
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Application lifespan — startup and shutdown hooks."""
     # Future: warm connections, initialise RAG index, etc.
+    start_scheduler(interval_seconds=30)
     yield
     # Cleanup if needed
+    stop_scheduler()
 
 
 def create_app() -> FastAPI:
@@ -52,6 +56,11 @@ def create_app() -> FastAPI:
     app.include_router(ehr.router, prefix=PREFIX)
     app.include_router(campaigns.router, prefix=PREFIX)
     app.include_router(scheduler.router, prefix=PREFIX)
+    app.include_router(voice_demo.router, prefix=PREFIX)
+    app.include_router(voice.router, prefix=PREFIX)
+    app.include_router(triage.router, prefix=PREFIX)
+    
+    app.mount("/demo", StaticFiles(directory="static"), name="static")
 
     # ------------------------------------------------------------------ #
     # Health check                                                         #

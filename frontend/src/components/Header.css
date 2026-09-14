@@ -1,0 +1,13 @@
+.header {
+  height: 72px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background-color: var(--color-bg-secondary);
+}
+
+@media (prefers-color-scheme: dark) {
+  .header .bg-primary-light {
+    background-color: var(--color-bg-tertiary);
+  }
+}

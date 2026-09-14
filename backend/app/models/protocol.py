@@ -50,6 +50,8 @@ class Protocol(Base, TimestampMixin):
     )
     # Flexible clinical content: questions, red_flags, instructions, etc.
     content: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
+    # Structured rules for deterministic safety and protocol evaluation
+    clinical_rules: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
 
     created_by: Mapped[uuid.UUID] = mapped_column(
         UUID(as_uuid=True),

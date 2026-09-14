@@ -62,6 +62,8 @@ class Campaign(Base, TimestampMixin):
     end_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
     
     created_by: Mapped[Optional[uuid.UUID]] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
+    protocol_id: Mapped[Optional[uuid.UUID]] = mapped_column(ForeignKey("protocols.id", ondelete="SET NULL"), nullable=True)
 
     hospital: Mapped["Hospital"] = relationship("Hospital", foreign_keys=[hospital_id])
     creator: Mapped["User"] = relationship("User", foreign_keys=[created_by])
+    protocol: Mapped["Protocol"] = relationship("Protocol")

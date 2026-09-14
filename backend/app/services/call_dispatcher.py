@@ -1,12 +1,19 @@
 import uuid
+import logging
+import asyncio
+from typing import List
+
+from app.services.call_worker import call_worker
+
+logger = logging.getLogger(__name__)
 
 class CallDispatcher:
-    def dispatch(self, queue_item_id: uuid.UUID) -> None:
+    def dispatch_calls(self, claimed_job_ids: List[uuid.UUID]) -> None:
         """
-        Mock interface for handing off a CLAIMED job to the voice layer.
-        In a real scenario, this might push a message to Celery, AWS SQS, 
-        or directly invoke a Twilio/AI voice agent endpoint.
+        Spawns background tasks to execute each claimed queue item via CallWorker.
         """
-        print(f"Handoff to Worker: Queue Item {queue_item_id} dispatched.")
-
+        for jid in claimed_job_ids:
+            logger.info(f"[Dispatcher] Spawning background worker for claimed job: {jid}")
+            asyncio.create_task(call_worker.execute(jid))
+            
 call_dispatcher = CallDispatcher()

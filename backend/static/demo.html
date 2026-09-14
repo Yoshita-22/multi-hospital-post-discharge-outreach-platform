@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice AI Demo (LiveKit)</title>
+    <script src="https://cdn.jsdelivr.net/npm/livekit-client/dist/livekit-client.umd.min.js"></script>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; line-height: 1.6; }
+        .card { border: 1px solid #ddd; border-radius: 8px; padding: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 20px; }
+        .status { font-weight: bold; color: #555; padding: 5px 10px; border-radius: 4px; background: #f0f0f0; }
+        .status.listening { background: #e3f2fd; color: #1565c0; }
+        .status.speaking { background: #e8f5e9; color: #2e7d32; }
+        .status.processing { background: #fff3e0; color: #ef6c00; }
+        button { padding: 10px 20px; font-size: 16px; cursor: pointer; border: none; border-radius: 4px; font-weight: bold; }
+        #startBtn { background: #1976d2; color: white; }
+        #startBtn:disabled { background: #ccc; cursor: not-allowed; }
+        #endBtn { background: #d32f2f; color: white; display: none; }
+        .transcript { margin-top: 20px; max-height: 400px; overflow-y: auto; background: #fafafa; padding: 15px; border-radius: 4px; border: 1px solid #eee; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div class="header">
+        <div>
+            <h2 style="margin: 0;">Hospital AI Outreach Demo (LiveKit)</h2>
+            <p style="margin: 5px 0 0 0; color: #666; font-size: 14px;">Patient: Demo Patient | Campaign: Heart Failure Follow-up</p>
+        </div>
+        <div id="statusBadge" class="status">Ready</div>
+    </div>
+
+    <div>
+        <button id="startBtn">Start Voice Call</button>
+        <button id="endBtn">End Call</button>
+    </div>
+
+    <div class="transcript" id="transcript">
+        <div style="color: #999; text-align: center; font-style: italic;">
+            Real-time transcript UI not yet wired to LiveKit data channel.<br>
+            Please converse using your microphone and listen to the AI!
+        </div>
+    </div>
+</div>
+
+<!-- Container for LiveKit injected audio element -->
+<div id="audioContainer"></div>
+
+<script>
+    const startBtn = document.getElementById('startBtn');
+    const endBtn = document.getElementById('endBtn');
+    const statusBadge = document.getElementById('statusBadge');
+    const audioContainer = document.getElementById('audioContainer');
+
+    let currentRoom = null;
+    let currentCallId = null;
+
+    function setStatus(status, className) {
+        statusBadge.textContent = status;
+        statusBadge.className = 'status ' + className;
+    }
+
+    async function startCall() {
+        startBtn.disabled = true;
+        setStatus('Fetching LiveKit Token...', 'processing');
+
+        try {
+            const res = await fetch('/api/v1/voice_demo/token');
+            if (!res.ok) {
+                throw new Error("Failed to get token: " + await res.text());
+            }
+            const data = await res.json();
+            currentCallId = data.room_name;
+
+            const room = new LivekitClient.Room();
+            currentRoom = room;
+
+            room.on(LivekitClient.RoomEvent.TrackSubscribed, (track, publication, participant) => {
+                if (track.kind === LivekitClient.Track.Kind.Audio) {
+                    const audioElement = track.attach();
+                    audioContainer.appendChild(audioElement);
+                    setStatus('Connected! AI is in the room. Speak now.', 'speaking');
+                }
+            });
+
+            room.on(LivekitClient.RoomEvent.Disconnected, () => {
+                endCallUI();
+            });
+
+            setStatus('Connecting to LiveKit...', 'processing');
+            await room.connect(data.url, data.token);
+
+            setStatus('Enabling microphone...', 'processing');
+            await room.localParticipant.setMicrophoneEnabled(true);
+
+            startBtn.style.display = 'none';
+            endBtn.style.display = 'inline-block';
+            setStatus('Waiting for AI Audio...', 'listening');
+
+        } catch (err) {
+            alert(err);
+            startBtn.disabled = false;
+            setStatus('Error', '');
+        }
+    }
+
+    async function endCall() {
+        if (currentRoom) {
+            await currentRoom.disconnect();
+        }
+        
+        if (currentCallId) {
+            try {
+                setStatus('Submitting mock conversation result...', 'processing');
+                
+                const mockPayload = {
+                    call_id: currentCallId,
+                    patient_id: "00000000-0000-0000-0000-000000000000",
+                    campaign_id: "00000000-0000-0000-0000-000000000000",
+                    outcome: "COMPLETED",
+                    patient_reached: true,
+                    responses: {
+                        "q1": "I am feeling somewhat tired.",
+                        "q2": "Yes, I picked up my medications yesterday.",
+                        "q3": "No new symptoms, but a little chest pain."
+                    },
+                    symptoms_reported: [
+                        { "symptom": "chest pain", "details": "mild chest pain reported by patient" }
+                    ],
+                    uncertainties: ["Patient wasn't sure if they needed a follow-up appointment."],
+                    callback_requested: false,
+                    callback_time: null,
+                    transcript: [
+                        { "role": "ai", "text": "Hello, am I speaking with the patient?" },
+                        { "role": "user", "text": "Yes, this is me." },
+                        { "role": "ai", "text": "Great. How are you feeling today?" },
+                        { "role": "user", "text": "A little tired and some mild chest pain." }
+                    ],
+                    summary: "Patient answered protocol. Reported mild chest pain. Mocked UI submission."
+                };
+                
+                await fetch(`/api/v1/voice/sessions/${currentCallId}/complete`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(mockPayload)
+                });
+                
+                setStatus('Mock Result Submitted!', 'speaking');
+            } catch (err) {
+                console.error("Mock submit failed:", err);
+            }
+        }
+        
+        endCallUI();
+    }
+
+    function endCallUI() {
+        startBtn.style.display = 'inline-block';
+        startBtn.disabled = false;
+        endBtn.style.display = 'none';
+        if (statusBadge.textContent !== 'Mock Result Submitted!') {
+            setStatus('Call Ended', '');
+        }
+        audioContainer.innerHTML = '';
+        currentRoom = null;
+        currentCallId = null;
+    }
+
+    startBtn.addEventListener('click', startCall);
+    endBtn.addEventListener('click', endCall);
+
+</script>
+
+</body>
+</html>

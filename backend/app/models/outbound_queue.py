@@ -14,6 +14,7 @@ class QueueItemStatus(str, enum.Enum):
     COMPLETED = "COMPLETED"
     FAILED = "FAILED"
     CANCELLED = "CANCELLED"
+    RETRY_PENDING = "RETRY_PENDING"
 
 class OutboundQueue(Base, TimestampMixin):
     __tablename__ = "outbound_queue"

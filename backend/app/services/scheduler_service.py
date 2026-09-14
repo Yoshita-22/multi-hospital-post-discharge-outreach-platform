@@ -19,6 +19,28 @@ from app.services.call_dispatcher import call_dispatcher
 
 class QueueScheduler:
     
+    async def run_all(self, db: AsyncSession) -> None:
+        """
+        Background periodic run for ALL active campaigns across the system.
+        """
+        from app.models.hospital import Hospital
+        
+        res = await db.execute(select(Hospital.id))
+        hospital_ids = res.scalars().all()
+        
+        for hid in hospital_ids:
+            # We mock a TenantContext to reuse the exact same safe scoping logic.
+            tenant = TenantContext(
+                user_id=uuid.UUID(int=0), # System mock user
+                hospital_id=hid,
+                role="PLATFORM_ADMIN" 
+            )
+            try:
+                await self.run_once(db, tenant)
+            except Exception as e:
+                import logging
+                logging.getLogger(__name__).error(f"Error running scheduler for hospital {hid}: {e}")
+
     async def run_once(self, db: AsyncSession, tenant: TenantContext) -> SchedulerRunResult:
         now = datetime.now(timezone.utc)
         
@@ -166,8 +188,7 @@ class QueueScheduler:
                 jobs_claimed += len(claimed_ids)
                 
                 # Handoff interface outside database transaction logical context, but within function
-                for cid in claimed_ids:
-                    call_dispatcher.dispatch(cid)
+                call_dispatcher.dispatch_calls(list(claimed_ids))
                     
         # Audit Log
         if jobs_claimed > 0:
