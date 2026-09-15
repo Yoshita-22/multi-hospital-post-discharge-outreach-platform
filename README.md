@@ -318,7 +318,7 @@ EHR Interface
 - **Git**
 - **GitHub**
   
-##5. Project Structure
+## 5. Project Structure
 ```
 project/
 │
@@ -431,12 +431,11 @@ uvicorn app.main:app --reload
 ```
 Frontend Setup
 
-Open another terminal and navigate to the frontend:
-
-cd frontend
+Open another terminal and navigate to the frontend
 
 Install dependencies:
 ```
+cd frontend
 npm install
 ```
 Start the frontend:
@@ -467,7 +466,7 @@ pnpm run dev
 Create a .env file based on .env.example.
 
 Example:
-
+```
 DATABASE_URL=your_database_url
 SYNC_DATABASE_URL=your_sync_database_url
 
@@ -483,7 +482,7 @@ LIVEKIT_URL=your_livekit_url
 LIVEKIT_API_KEY=your_livekit_api_key
 LIVEKIT_API_SECRET=your_livekit_api_secret
 Security
-
+```
 Do not commit:
 
 .env
@@ -514,7 +513,9 @@ Alembic Migrations
 Alembic is used to manage database schema migrations.
 
 Apply migrations
+```
 alembic upgrade head
+```
 Create a migration
 
 After changing SQLAlchemy models:
@@ -684,20 +685,20 @@ These are illustrative demonstration scenarios only and are not medically valida
 ### 13. Running the Application
 
 Then start the backend:
-
+```
 cd backend
 uvicorn app.main:app --reload
-
+```
 Start the frontend in another terminal:
-
+```
 cd frontend
 npm run dev
-
+```
 If using the LiveKit agent:
-
+```
 cd my-doctor-agent
 pnpm run dev
-
+```
 The frontend communicates with the FastAPI backend through the configured API base URL.
 
 FastAPI's interactive API documentation can be accessed through the backend Swagger endpoint during development.
@@ -727,7 +728,7 @@ Tenant Isolation
 Verify that users belonging to one hospital cannot access another hospital's data.
 
 Example:
-
+```
 Hospital A
    │
    ├── Patients ✓
@@ -738,42 +739,42 @@ Hospital A
    ✕ Hospital B Campaigns
    ✕ Hospital B Protocols
    ✕ Hospital B Calls
-
+```
 Tenant isolation must be enforced at the backend/service layer.
 
 Queue
 
 Test:
 
-Prioritization
-Concurrency
-Retry
-Backoff
-No-answer handling
-Callback
-Maximum retries
-AI / Triage
+- Prioritization
+- Concurrency
+- Retry
+- Backoff
+- No-answer handling
+- Callback
+- Maximum retries
+- AI / Triage
 
 Test:
 
-Routine scenario
-Attention scenario
-Urgent scenario
-Agent disagreement
-Safety override
-Protocol rule matching
-Agent failure
-Idempotency
-EHR
+- Routine scenario
+- Attention scenario
+- Urgent scenario
+- Agent disagreement
+- Safety override
+- Protocol rule matching
+- Agent failure
+- Idempotency
+- EHR
 
 Test:
 
-Patient lookup
-Encounter lookup
-Documentation
-Follow-up task
-Escalation
-EHR write operations
+- Patient lookup
+- Encounter lookup
+- Documentation
+- Follow-up task
+- Escalation
+- EHR write operations
 
 
 ## 15. Demo Credentials
