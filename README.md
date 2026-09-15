@@ -58,87 +58,100 @@ Mock EHR / Staff Notification
    ↓
 Campaign & Hospital Analytics
 ```
-2. Key Features
-🏥 Multi-Tenant Hospital Platform
+## 2. Key Features
+
+### 🏥 Multi-Tenant Hospital Platform
 
 Each hospital is treated as an independent tenant.
 
 Tenant isolation applies to:
 
-Users
-Patients
-Discharge records
-Campaigns
-Clinical protocols
-Knowledge resources
-Calls
-Escalations
-Notifications
-Analytics
-Configuration
+- Users
+- Patients
+- Discharge records
+- Campaigns
+- Clinical protocols
+- Knowledge resources
+- Calls
+- Escalations
+- Notifications
+- Analytics
+- Configuration
 
 The backend enforces tenant isolation rather than relying only on frontend filtering.
 
-👥 Role-Based Access
+---
+
+### 👥 Role-Based Access
 
 The platform supports four roles:
 
-Platform Admin
-Hospital Admin
-Campaign Manager
-Clinical Reviewer
+- **Platform Admin**
+- **Hospital Admin**
+- **Campaign Manager**
+- **Clinical Reviewer**
 
 Each role has a different set of responsibilities and permissions.
 
-👤 Patient & Discharge Management
+---
+
+### 👤 Patient & Discharge Management
 
 The platform supports structured healthcare-oriented patient information, including:
 
-Patient information
-Encounter information
-Discharge information
-Conditions
-Medications
-Care plans
-Observations
-Follow-up requirements
+- Patient information
+- Encounter information
+- Discharge information
+- Conditions
+- Medications
+- Care plans
+- Observations
+- Follow-up requirements
 
 The prototype supports simulated discharge data across multiple hospitals.
 
-📢 Campaign Management
+---
+
+### 📢 Campaign Management
 
 Campaign managers can:
 
-Create campaigns
-Configure campaign rules
-Review eligible patients
-Start campaigns
-Pause campaigns
-Resume campaigns
-Monitor campaign progress
-Review completed and failed calls
-Monitor escalations
-Re-prioritize campaign work
-📋 Outbound Queue
+- Create campaigns
+- Configure campaign rules
+- Review eligible patients
+- Start campaigns
+- Pause campaigns
+- Resume campaigns
+- Monitor campaign progress
+- Review completed and failed calls
+- Monitor escalations
+- Re-prioritize campaign work
+
+---
+
+### 📋 Outbound Queue
 
 The queue manages patient outreach work with support for:
 
-Prioritization
-Concurrency control
-Retry handling
-Backoff
-No-answer handling
-Busy/voicemail handling
-Dropped-call handling
-Callback handling
-Maximum retry handling
-Manual follow-up
-Clinical cutoff handling
-🤖 AI Clinical Triage
+- Prioritization
+- Concurrency control
+- Retry handling
+- Backoff
+- No-answer handling
+- Busy/voicemail handling
+- Dropped-call handling
+- Callback handling
+- Maximum retry handling
+- Manual follow-up
+- Clinical cutoff handling
+
+---
+
+### 🤖 AI Clinical Triage
 
 The platform uses multiple AI assessment components:
-```
 
+```text
 ConversationResult
        ↓
 ┌─────────────┬─────────────┬─────────────┐
@@ -146,34 +159,33 @@ ConversationResult
 │    Agent    │    Agent    │    Agent    │
 └─────────────┴─────────────┴─────────────┘
        ↓
-Consensus
+Consensus Engine
        ↓
-Safety Rules
+Safety Rule Engine
        ↓
 TriageResult
 ```
-
 The three agents independently analyze the patient conversation before the backend computes the final triage result.
 
-🏥 Mock EHR
+### 🏥 Mock EHR
 
 The platform provides a structured Mock EHR interface for:
 
-Patient lookup
-Encounter lookup
-Discharge information
-Observations
-Conditions
-Care-plan information
-Communication records
-Follow-up tasks
-Escalations
+- Patient lookup
+- Encounter lookup
+- Discharge information
+- Observations
+- Conditions
+- Care-plan information
+- Communication records
+- Follow-up tasks
+- Escalations
 
-The AI does not directly manipulate EHR/database tables.
+The AI does not directly manipulate EHR or database tables.
 
 Instead, healthcare operations follow:
 
-```
+```text
 AI Agent
    ↓
 Structured Request
@@ -186,19 +198,6 @@ Healthcare Data Service
    ↓
 Mock EHR
 ```
-📊 Operational Analytics
-
-The platform provides visibility into:
-
-Pending calls
-Active calls
-Retries
-Successful contacts
-Failed contacts
-Escalations
-Campaign completion
-System health
-Clinical safety metrics
 ## 3. System Architecture
 
 ```text
@@ -260,13 +259,13 @@ Clinical safety metrics
                                                ▼
                                            Mock EHR
 ```
-```
+
 AI and Healthcare Data Boundary
 
 AI agents are separated from direct database/EHR access.
 
 The intended boundary is:
-
+```
 AI Agent
    ↓
 Structured Tool Request
@@ -279,35 +278,46 @@ Healthcare Data Service
    ↓
 EHR Interface
 ```
-##4. Technology Stack
-Backend
-Python
-FastAPI
-SQLAlchemy
-PostgreSQL
-Alembic
-Pydantic
-JWT Authentication
-APScheduler
-AI
-Google Gemini
-Multi-agent clinical assessment
-Structured AI outputs
-Voice
-LiveKit Agents
-Deepgram
-Mock voice/call provider for prototype demonstration
-Frontend
-React
-TypeScript
-API-based communication with FastAPI
-JWT authentication
-Role-based UI
-Development Tools
-ChatGPT
-Antigravity
-Git
-GitHub
+## 4. Technology Stack
+
+### Backend
+
+- **Python**
+- **FastAPI**
+- **SQLAlchemy**
+- **PostgreSQL**
+- **Alembic**
+- **Pydantic**
+- **JWT Authentication**
+- **APScheduler**
+
+### AI
+
+- **Google Gemini**
+- **Multi-agent clinical assessment**
+- **Structured AI outputs**
+
+### Voice
+
+- **LiveKit Agents**
+- **Deepgram**
+- **Mock voice/call provider for prototype demonstration**
+
+### Frontend
+
+- **React**
+- **TypeScript**
+- **API-based communication with FastAPI**
+- **JWT authentication**
+- **Role-based UI**
+
+### Development Tools
+
+- **ChatGPT**
+- **Antigravity**
+- **Git**
+- **GitHub**
+  
 ##5. Project Structure
 ```
 project/
@@ -354,95 +364,105 @@ project/
 └── README.md
 ##6. Prerequisites
 ```
-Before running the project locally, install:
+# 6. Prerequisites
 
-Python 3.10+
-Node.js 18+
-PostgreSQL
-Git
-npm
-pnpm
+Before running the project locally, install the following:
 
-Optional services:
+- **Python 3.10+**
+- **Node.js 18+**
+- **PostgreSQL**
+- **Git**
+- **npm**
+- **pnpm**
 
-Google Gemini API
-Deepgram
-LiveKit
-##7. Setup Instructions
-Backend Setup
+### Optional Services
 
-Clone the repository:
+The following services are required only when using the corresponding AI/voice functionality:
 
+- **Google Gemini API**
+- **Deepgram**
+- **LiveKit**
+
+---
+
+# 7. Setup Instructions
+
+## Backend Setup
+
+### 1. Clone the Repository
+
+```bash
 git clone <repository-url>
 cd <project-directory>
+```
+
+## Backend Setup
 
 Navigate to the backend:
 
+```bash
 cd backend
-
-Create a virtual environment:
-
-python -m venv venv
-Windows
-venv\Scripts\activate
-Linux/macOS
-source venv/bin/activate
 
 Install dependencies:
 
 pip install -r requirements.txt
+```
 
 Create the environment file:
 
+Linux/macOS
+```
 cp .env.example .env
-
-On Windows PowerShell:
-
+```
+Windows PowerShell
+```
 Copy-Item .env.example .env
+```
 
 Configure the required environment variables in .env.
 
-Run migrations:
+Run database migrations:
 
 alembic upgrade head
 
 Start the backend:
-
+```
 uvicorn app.main:app --reload
+```
 Frontend Setup
 
-Open another terminal:
+Open another terminal and navigate to the frontend:
 
 cd frontend
 
 Install dependencies:
-
+```
 npm install
-
+```
 Start the frontend:
-
+```
 npm run dev
+```
 LiveKit Agent Setup
 
 The LiveKit agent is maintained as a separate TypeScript project.
 
 Navigate to the agent:
-
+```
 cd my-doctor-agent
-
+```
 Install dependencies:
-
+```
 pnpm install
+```
 
 Configure the required API keys and LiveKit URL in .env.
 
 Run the agent:
-
+```
 pnpm run dev
-
-The prototype can use the Mock Call Provider when live voice infrastructure is not available.
-
-##8. Environment Configuration
+```
+## 8. Environment Configuration
 
 Create a .env file based on .env.example.
 
@@ -475,7 +495,7 @@ AI credentials
 
 Only commit .env.example containing placeholder values.
 
-##9. Database Setup
+## 9. Database Setup
 PostgreSQL
 
 The application uses PostgreSQL for persistent application data.
@@ -510,12 +530,13 @@ View migration history
 alembic history
 Show current database revision
 alembic current
-##10. Mock EHR Setup
+
+## 10. Mock EHR Setup
 
 The prototype uses a Mock EHR to demonstrate healthcare-system integration without requiring access to a real hospital EHR.
 
 The Mock EHR provides structured operations such as:
-
+```
 Patient Lookup
       ↓
 Encounter Lookup
@@ -525,11 +546,11 @@ Discharge Information
 Clinical Information
       ↓
 Communication / Task / Escalation
-
+```
 The AI does not directly access EHR tables.
 
 Instead:
-
+```
 AI Agent
    ↓
 Structured Request
@@ -541,14 +562,15 @@ Validation
 Healthcare Data Service
    ↓
 Mock EHR
-
+```
 This abstraction allows the Mock EHR to be replaced with a real EHR integration in a future production implementation.
 
-11. Queue Simulation
+## 11. Queue Simulation
 
 The outbound queue represents patients waiting for post-discharge outreach.
 
 Queue
+```
 Eligible Patient
       ↓
 Priority Calculation
@@ -560,20 +582,21 @@ Queue Scheduler
 Call Worker
       ↓
 Call Attempt
-
+```
 The queue considers factors such as:
 
 Patient risk
 Discharge timing
 Campaign rules
 Calling capacity
-Concurrency
+
+### Concurrency
 
 The queue worker limits the number of calls processed concurrently according to the configured calling capacity.
 
 This prevents the system from attempting unlimited simultaneous calls.
 
-Retry
+### Retry
 
 Failed or unanswered calls can be scheduled for another attempt according to retry configuration.
 
@@ -592,7 +615,7 @@ If a patient requests a callback, the system can record the callback requirement
 
 The callback information is preserved as part of the outreach workflow.
 
-12. AI / Clinical Triage Demo
+## 12. AI / Clinical Triage Demo
 
 The platform uses a multi-agent clinical triage workflow.
 ```
@@ -616,50 +639,49 @@ ConversationResult
                ▼
           TriageResult
 ```
-Findings Agent
+### 🤖 Findings Agent
 
 Extracts information explicitly reported by the patient.
 
-Protocol Agent
+### 📋 Protocol Agent
 
 Evaluates the extracted information against the campaign's configured protocol.
 
-Safety Agent
+### 🛡️ Safety Agent
 
 Identifies potential safety concerns and red flags.
 
-Consensus
+### ⚖️ Consensus
 
 The assessments are combined using deterministic backend logic.
 
 The primary triage levels are:
 
+```text
 ROUTINE < ATTENTION < URGENT
-Demo Scenarios
+```
+### Demo Scenarios
 🟢 Routine
 "I am feeling well and recovering normally."
 
 Expected:
-
 ROUTINE
+
 🟡 Attention
 "My ankles have become more swollen over the last two days."
 
 Expected:
-
 ATTENTION
+
 🔴 Urgent
 "I have severe chest pain and difficulty breathing."
 
 Expected:
-
 URGENT
 
 These are illustrative demonstration scenarios only and are not medically validated clinical protocols.
 
-13. Running the Application
-
-Start PostgreSQL first.
+### 13. Running the Application
 
 Then start the backend:
 
@@ -680,7 +702,7 @@ The frontend communicates with the FastAPI backend through the configured API ba
 
 FastAPI's interactive API documentation can be accessed through the backend Swagger endpoint during development.
 
-##14. Testing Instructions
+## 14. Testing Instructions
 
 The application should be tested across the following areas.
 
@@ -754,16 +776,15 @@ Escalation
 EHR write operations
 
 
-##15. Demo Credentials
+## 15. Demo Credentials
 
 The following credentials are intended only for the local/demo environment.
-
-Role	Email	Password
-Platform Admin	admin@platform.com	PlatformAdmin@2026
-Hospital Admin	seema@vedhanta.com	SecurePass123!
-Campaign Manager	renu@vedhanta.com	campaignPass123!
-
-Important: Change or disable demo credentials before any production deployment.
+```
+Role	            Email	               Password
+Platform Admin	   admin@platform.com	PlatformAdmin@2026
+Hospital Admin	   seema@vedhanta.com	SecurePass123!
+Campaign Manager	renu@vedhanta.com	   campaignPass123!
+```
 
 ## 16. Known Limitations
 
@@ -783,7 +804,6 @@ Important: Change or disable demo credentials before any production deployment.
 ## 17. Future Enhancements
 
 Potential future enhancements include:
-
 
 - Production telephony and voice infrastructure
 - Scalable distributed workers
