@@ -199,8 +199,9 @@ Escalations
 Campaign completion
 System health
 Clinical safety metrics
-3. System Architecture
-                  ```
+## 3. System Architecture
+
+```text
                     ┌──────────────────────┐
                     │      Frontend        │
                     │ Hospital Operations  │
@@ -219,7 +220,7 @@ Clinical safety metrics
                     │ Campaigns            │
                     │ Outreach             │
                     │ Triage               │
-                    │ Analytics             │
+                    │ Analytics            │
                     └──────────┬───────────┘
                                │
               ┌────────────────┼────────────────┐
@@ -258,7 +259,7 @@ Clinical safety metrics
                                                │
                                                ▼
                                            Mock EHR
-                                           ```
+```
 ```
 AI and Healthcare Data Boundary
 
@@ -764,15 +765,35 @@ Campaign Manager	renu@vedhanta.com	campaignPass123!
 
 Important: Change or disable demo credentials before any production deployment.
 
-##16. Known Limitations
+## 16. Known Limitations
 
-The voice workflow may use a Mock Call Provider instead of production telephony.
-The Mock EHR is simulated and is not connected to a real hospital EHR.
-Clinical protocols and demo scenarios are illustrative and not medically validated.
-AI-generated outputs may be affected by ambiguous or incomplete patient responses.
-Production-scale voice infrastructure has not been fully implemented.
-Full production FHIR interoperability is not implemented.
-Hospital notification channels are simulated.
-The current queue/scheduler implementation is intended for prototype-scale workloads.
-Comprehensive production clinical validation and regulatory review are outside the prototype scope.
-Language and regional dialect coverage may be limited.
+- The voice workflow may use a Mock Call Provider instead of production telephony.
+- The Mock EHR is simulated and is not connected to a real hospital EHR.
+- Clinical protocols and demo scenarios are illustrative and not medically validated.
+- AI-generated outputs may be affected by ambiguous or incomplete patient responses.
+- Production-scale voice infrastructure has not been fully implemented.
+- Full production FHIR interoperability is not implemented.
+- Hospital notification channels are simulated.
+- The current queue/scheduler implementation is intended for prototype-scale workloads.
+- Comprehensive production clinical validation and regulatory review are outside the prototype scope.
+- Language and regional dialect coverage may be limited.
+
+---
+
+## 17. Future Enhancements
+
+Potential future enhancements include:
+
+
+- Production telephony and voice infrastructure
+- Scalable distributed workers
+- More comprehensive multilingual support
+- Clinical validation of protocols
+- Enhanced observability and monitoring
+- Advanced hospital analytics
+- Production-grade notification integrations
+- Comprehensive security and compliance validation
+- Clinician feedback loops for improving AI assessments
+- Real-time operational dashboards
+- Advanced AI evaluation and monitoring
+- Improved interoperability with external healthcare systems
